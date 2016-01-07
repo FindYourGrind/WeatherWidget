@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="WeatherWidgetApp">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <!-- <script src="http://code.angularjs.org/1.1.4/angular.min.js"></script> -->
+    <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.6/ngStorage.min.js"></script> -->
+    <script src="angular.min.js"></script>
+    <script src="ngStorage.min.js"></script>
+    <script src="jquery-2.1.4.js"></script>
+    <script src="app.js"></script>
+    <title>WeatherWidget</title>
+</head>
+<body>
+    <div class="parent" name="widget" ng-controller="WeatherWidgetController">
+
+        <div class="inputArea">
+            <input class="locationInput" type="text" name="regionInput" ng-model="inputData.text"
+                      my-enter="getWeather(inputData.text)" ng-pattern="inputData.pattern"
+                      placeholder="City,country (Kharkiv,ua)">
+                <button class="weatherButton" ng-click="getWeather(inputData.text)">Get weather</button>
+        </div>
+
+        <div class="error">{{ error.inputData }}</div>
+
+        <ul id="tabs">
+            <div class="bookmark" ng-repeat="region in $storage.locations">
+                <a class="bookmarkText" title="{{ region }}" name="{{ region }}"
+                   ng-style="activeBookmark" ng-click="getWeather(region)">{{ region }}</a>
+                <button class="closeButton" ng-click="deleteBookmark(region)">X</button>
+            </div>
+        </ul>
+
+        <div ng-if="$storage.activeLocation != -1">
+            <div class="location"><h2>{{ weather['name'] }} {{ weather.sys['country'] }}</h2></div>
+        </div>
+
+        <div class="weatherContent" id="content">
+
+            <div class="mainWeatherData" ng-if="$storage.activeLocation != -1">
+                <img  class="weatherIcon" src="http://openweathermap.org/img/w/{{ weatherIcon }}" alt="">
+                <div class="temperature">{{ weather.main['temp'] }} °C</div>
+            </div>
+
+            <div class="secondaryWeatherData">
+                <span class="pressure"><img class="pressureImage"
+                                            src="http://www.ejprescott.com/media/icons/water-pressure-testing.png"
+                                            width="18" height="18">
+                    <div class="pressureValue" ng-if="$storage.activeLocation != -1">
+                        {{ weather.main['pressure'] }} hPa</div></span>
+                <span class="humidity"><img class="humidityImage"
+                                            src="https://cdn3.iconfinder.com/data/icons/medcare/512/drop-512.png"
+                                            width="18" height="18">
+                    <div class="humidityValue" ng-if="$storage.activeLocation != -1">
+                        {{ weather.main['humidity'] }} %</div></span>
+                <span class="wind"><img class="windImage"
+                                        src="https://cdn1.iconfinder.com/data/icons/weather-18/512/wind_storm-512.png"
+                                        width="18" height="18">
+                    <div class="windValue" ng-if="$storage.activeLocation != -1">
+                        {{ weather.wind['speed'] }} mps</div></span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
